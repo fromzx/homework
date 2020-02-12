@@ -1,0 +1,22 @@
+---
+
+- name: install nginx
+  hosts: web
+  roles:
+    - nginx
+
+- name: deploy web
+  hosts: web
+  roles:
+    - deploy_web
+
+- name: install docker
+  hosts: app
+  roles:
+    - docker
+
+- name: deploy app
+  hosts: app
+  roles:
+    - deploy_app
+

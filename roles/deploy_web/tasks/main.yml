@@ -1,0 +1,33 @@
+---
+
+- name: Deploy web
+  block:
+  - name: delete default
+    file: 
+      path: /etc/nginx/sites-enabled/default
+      state: absent
+
+  - name: copy nginx demo.conf
+    copy:
+      src: demo.conf
+      dest: /etc/nginx/conf.d/
+    notify: restart nginx
+
+  - name: create directory /opt/webapps
+    file:
+      name: /opt/webapps
+      state: directory
+      mode: 0755
+
+  - name: install unzip
+    apt:
+      name: unzip
+
+  - name: copy demo.zip to /opt/webapps and unarchive
+    unarchive:
+      src: demo.zip
+      dest: /opt/webapps/
+
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
+  become: true
+  become_user: root

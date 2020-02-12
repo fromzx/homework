@@ -1,0 +1,19 @@
+version: '2.3'
+
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: demo:0.1
+    container_name: app
+    ports:
+      - 8080:8080
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"

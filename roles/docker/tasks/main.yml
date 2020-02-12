@@ -1,0 +1,51 @@
+---
+
+- name: Install doocker-ce for Ubuntu
+  block:
+  - name: get "lsb_release -cs" value
+    shell: lsb_release -cs
+    register: lsb_release_cs
+
+  - name: get "uname -s" value
+    shell: uname -s
+    register: uname_s
+
+  - name: get "uname -m" value
+    shell: uname -m
+    register: uname_m
+
+  - name: Install packages to allow apt to use a repository over HTTPS 
+    apt:
+      name: "{{ item }}"
+    loop:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg-agent
+      - software-properties-common
+
+  - name: Add Dockers official GPG key
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      id: 0EBFCD88
+      state: present
+
+  - name: Add apt repository
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ lsb_release_cs.stdout }} stable
+      state: present
+      filename: docker-ce
+
+  - name: install docker-ce
+    apt: 
+      name: docker-ce=18.06.3~ce~3-0~ubuntu
+      state: present
+  
+  - name: install docker-compose
+    get_url:
+      url: https://github.com/docker/compose/releases/download/1.25.3/docker-compose-{{ uname_s.stdout }}-{{ uname_m.stdout }}
+      dest: /usr/local/bin/docker-compose
+      mode: '0755'
+
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
+  become: true
+  become_user: root

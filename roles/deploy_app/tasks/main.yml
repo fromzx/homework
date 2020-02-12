@@ -1,0 +1,14 @@
+---
+
+- name: Deploy app
+  block:
+  - name: copy files
+    copy:
+      src: demo
+      dest: /opt/
+  - name: docker_compose up -d
+    shell: cd /opt/demo/;docker-compose up -d
+
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
+  become: true
+  become_user: root

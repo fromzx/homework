@@ -1,0 +1,17 @@
+---
+
+- name: Install nginx
+  block:
+  - name: install nginx
+    apt: 
+      name: nginx
+      state: present
+
+  - name: start nginx
+    service:
+      name: nginx
+      state: started
+
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
+  become: true
+  become_user: root
